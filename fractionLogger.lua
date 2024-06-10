@@ -5,7 +5,7 @@ end
 local scriptName = "Fraction Logger"
 local scriptNameShort = "FL"
 local scriptAuthor = "Dan Capelli & Oleg Lombardi"
-local scriptVersion = "v0.1.0-beta"
+local scriptVersion = "v0.2.0-beta"
 
 script_name(scriptName)
 script_author(scriptAuthor)
@@ -144,6 +144,7 @@ local commandsArray = {
         [false] = "offuninvite"
     },
 }
+
 local actionsArray = {
     ["/invite"] = "Принятие",
     ["/iinvite"] = "Перевод",
@@ -230,7 +231,7 @@ function sampev.onServerMessage(color, message)
         or message:find(string.format("Вы понизили %s", dataToPost.target))
         or message:find(string.format("Вы приняли %s", dataToPost.target))
         or message:find(string.format("Вы выгнали %s", dataToPost.target)) then
-            postData()
+            lua_thread.create(postData)
         end
     end
 end
@@ -461,7 +462,7 @@ function imgui.OnDrawFrame()
         imgui.Text("\t" .. fa.ICON_FA_BED .. " AFK/Sleep")
         for imguiMemberName, imguiMemberAttrs in pairs(membersPool) do
             imgui.NextColumn()
-            if imgui.Selectable(string.format(u8"%s%s", imguiMemberName, imguiMemberAttrs[1]), false, imgui.SelectableFlags.SpanAllColumns) then
+            if imgui.Selectable(string.format(u8"%s %s", imguiMemberName, imguiMemberAttrs[1]), false, imgui.SelectableFlags.SpanAllColumns) then
                 selectedMember.name = imguiMemberName
                 selectedMember.id = imguiMemberAttrs[1]
                 selectedMember.rank = imguiMemberAttrs[2]
@@ -472,6 +473,7 @@ function imgui.OnDrawFrame()
             imgui.Text(u8(imguiMemberAttrs[2]))
             imgui.NextColumn()
             imgui.Text(imguiMemberAttrs[3])
+            imgui.Separator()
         end
     end
     -- Онлайн (конец)
@@ -501,6 +503,7 @@ function imgui.OnDrawFrame()
             imgui.Text(string.format(u8"%s часов", imguiAttr[2]))
             imgui.NextColumn()
             imgui.Text(imguiAttr[3])
+            imgui.Separator()
         end
     end
     imgui.Columns(1)
@@ -554,10 +557,12 @@ function sampev.onShowDialog(id, style, title, button1, button2, text)
             playerData.fractionType = "News"
         end
         if playerData.fraction ~= "Нет" and isGovernmentFraction then
-            needToLogin = not needToLogin
             sendLoggerMessage(string.format("Вы авторизовались как {ffd700}%s {FFFFFF}({ffd700}%s{FFFFFF}){FFFFFF}!", playerData.rank, playerData.fraction))
         else
             sendLoggerMessage("Не удалось авторизоваться!")
+
+        needToLogin = not needToLogin
+
         end
         return false
     end
