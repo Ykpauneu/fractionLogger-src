@@ -216,7 +216,7 @@ function sampev.onServerMessage(color, message)
         lua_thread.create(
             function ()
                 wait(1500)
-                sampProcessChatInput("/stats")
+                sampSendChat("/stats")
             end
         )
     end
@@ -244,18 +244,22 @@ function sampev.onSendCommand(commandText)
     if command == "/invite" or command == "/iinvite" or command == "/uninvite" then
         local targetId, reason = commandText:match("(%d+)%s(.*)")
         if targetId == nil then
-            sendLoggerMessage(string.format("Введите: %s [id игрока] [причина*]", command))
+            sendLoggerMessage(string.format("Введите: %s [id игрока] [причина]", command))
             return false
         end
-        reason = reason ~= "" and reason or "Нет причины"
+
+        if reason == nil or isEmptyString(reason) then
+            reason = "Нет причины"
+        end
+
         if #reason > 25 then
-            sendLoggerMessage(string.format("Введите: %s [id игрока] [причина*]", command))
+            sendLoggerMessage(string.format("Введите: %s [id игрока] [причина]", command))
             return false
         end
 
         local targetName = sampGetPlayerNickname(targetId)
         if targetName == nil then
-            sendLoggerMessage(string.format("Введите: %s [id игрока] [причина*]", command))
+            sendLoggerMessage(string.format("Введите: %s [id игрока] [причина]", command))
             return false
         end
         updateToPostData(actionsArray[command], targetName, reason)
@@ -267,7 +271,11 @@ function sampev.onSendCommand(commandText)
             sendLoggerMessage(string.format("Введите: %s [id игрока] [ранг] [причина*]", command))
             return false
         end
-        reason = reason ~= "" and reason or "Нет причины"
+
+        if reason == nil or isEmptyString(reason) then
+            reason = "Нет причины"
+        end
+
         if #reason > 25 then
             sendLoggerMessage(string.format("Введите: %s [id игрока] [ранг] [причина*]", command))
             return false
@@ -287,7 +295,11 @@ function sampev.onSendCommand(commandText)
             sendLoggerMessage(string.format("Введите: %s [имя игрока] [ранг] [причина*]", command))
             return false
         end
-        reason = reason ~= "" and reason or "Нет причины"
+
+        if reason == nil or isEmptyString(reason) then
+            reason = "Нет причины"
+        end
+
         if #reason > 25 then
             sendLoggerMessage(string.format("Введите: %s [имя игрока] [ранг] [причина*]", command))
             return false
@@ -296,9 +308,9 @@ function sampev.onSendCommand(commandText)
             lua_thread.create(
                 function ()
                     sendLoggerMessage("Получение списка сотрудников во фракци..")
-                    sampProcessChatInput("/offmfilter clear")
+                    sampSendChat("/offmfilter clear")
                     wait(500)
-                    sampProcessChatInput("/offmembers 1")
+                    sampSendChat("/offmembers 1")
                 end)
         end
         for key, _ in pairs(offMembersPool) do
@@ -318,21 +330,25 @@ function sampev.onSendCommand(commandText)
         local targetName, reason = commandText:match("(%S+)%s(.*)")
         local isFound = false
         if targetName == nil or rank == nil then
-            sendLoggerMessage(string.format("Введите: %s [имя игрока] [причина*]", command))
+            sendLoggerMessage(string.format("Введите: %s [имя игрока] [причина]", command))
             return false
         end
-        reason = reason ~= "" and reason or "Нет причины"
+
+        if reason == nil or isEmptyString(reason) then
+            reason = "Нет причины"
+        end
+
         if #reason > 25 then
-            sendLoggerMessage(string.format("Введите: %s [имя игрока] [причина*]", command))
+            sendLoggerMessage(string.format("Введите: %s [имя игрока] [причина]", command))
             return false
         end
         if offMembersPool == {} then
             lua_thread.create(
                 function ()
                     sendLoggerMessage("Получение списка сотрудников во фракци..")
-                    sampProcessChatInput("/offmfilter clear")
+                    sampSendChat("/offmfilter clear")
                     wait(500)
-                    sampProcessChatInput("/offmembers 1")
+                    sampSendChat("/offmembers 1")
                 end)
         end
         for key, _ in pairs(offMembersPool) do
@@ -356,7 +372,7 @@ function updateToPostData(action, target, reason)
     dataToPost.action = u8(action)
     dataToPost.target = target
     dataToPost.reason = u8(reason)
-    dataToPost.date = os.date("%d.%m.%Y %H:%M")
+    dataToPost.date = os.date("%d.%m.%Y %H:%M:%S")
 end
 
 function postData()
@@ -388,34 +404,34 @@ function imgui.OnDrawFrame()
     if imgui.ButtonClickable(not needToLogin, fa.ICON_FA_USER_ALT .. u8" Состав онлайн", imgui.ImVec2(140, 20)) then
         isOnlineMode = true
         selectedMember = {}
-        sampProcessChatInput("/members 1")
+        sampSendChat("/members 1")
     end
     if imgui.ButtonClickable(not needToLogin, fa.ICON_FA_USER_ALT_SLASH.. u8" Состав оффлайн", imgui.ImVec2(140, 20)) then
         isOnlineMode = false
         selectedMember = {}
         lua_thread.create(
             function ()
-                sampProcessChatInput("/offmfilter clear")
+                sampSendChat("/offmfilter clear")
                 wait(500)
-                sampProcessChatInput("/offmembers 1")
+                sampSendChat("/offmembers 1")
             end)
 
     end
     if imgui.ButtonClickable(not needToLogin, fa.ICON_FA_SYNC .. u8" Обновить", imgui.ImVec2(140, 20)) then
         selectedMember = {}
         if isOnlineMode then
-            sampProcessChatInput("/members 1")
+            sampSendChat("/members 1")
         else
             lua_thread.create(
                 function ()
-                    sampProcessChatInput("/offmfilter clear")
+                    sampSendChat("/offmfilter clear")
                     wait(500)
-                    sampProcessChatInput("/offmembers 1")
+                    sampSendChat("/offmembers 1")
                 end)
         end
     end
     if imgui.ButtonClickable(needToLogin, fa.ICON_FA_SIGN_IN_ALT .. u8" Войти", imgui.ImVec2(140, 20)) then
-        sampProcessChatInput("/stats")
+        sampSendChat("/stats")
     end
     imgui.EndChild()
     -- Кнопки (конец)
@@ -737,4 +753,8 @@ function split(str, delim, plain)
         pos = epos and epos + 1
     until not pos
     return tokens
+end
+
+function isEmptyString(str)
+    return str:gsub("%s", "") == ""
 end
