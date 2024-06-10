@@ -221,6 +221,10 @@ function sampev.onServerMessage(color, message)
         )
     end
 
+    if not needToLogin and message:find("Фильтр сброшен") then
+        return false
+    end
+
     if not needToLogin and dataToPost ~= {} then
         if message:find(string.format("Вы повысили %s", dataToPost.target))
         or message:find(string.format("Вы понизили %s", dataToPost.target))
@@ -356,7 +360,6 @@ function updateToPostData(action, target, reason)
 end
 
 function postData()
-
     response = requests.post("http://srp-fl.online/post", {headers=headers, data=dataToPost})
     if response.status_code ~= 200 then
         sendLoggerMessage("Не удалось сохранить лог действий!")
@@ -414,9 +417,9 @@ function imgui.OnDrawFrame()
     if imgui.ButtonClickable(needToLogin, fa.ICON_FA_SIGN_IN_ALT .. u8" Войти", imgui.ImVec2(140, 20)) then
         sampProcessChatInput("/stats")
     end
-
     imgui.EndChild()
     -- Кнопки (конец)
+
     -- Информация (начало)
     imguiSetCursorPos(8, 140)
     imgui.BeginChild("LeftBottomChild", imgui.ImVec2(155, 65), true)
@@ -520,17 +523,21 @@ function sampev.onShowDialog(id, style, title, button1, button2, text)
         playerData.rank = text:match("Ранг(.-)\n")
         playerData.fraction = playerData.fraction:gsub("\t", "")
         playerData.rank = playerData.rank:gsub("\t", "")
+        local isGovernmentFraction = false
 
         if playerData.fraction:find("Army SF") or playerData.fraction:find("FBI") or playerData.fraction:find("Army LV") or playerData.fraction:find("Mayor") then
+            isGovernmentFraction = true
             playerData.fractionType = playerData.fraction
         end
         if playerData.fraction:find("Police") then
+            isGovernmentFraction = true
             playerData.fractionType = "Police"
         end
         if playerData.fraction:find("News") then
+            isGovernmentFraction = true
             playerData.fractionType = "News"
         end
-        if playerData.fraction ~= "Нет" then
+        if playerData.fraction ~= "Нет" and isGovernmentFraction then
             needToLogin = not needToLogin
             sendLoggerMessage(string.format("Вы авторизовались как {ffd700}%s {FFFFFF}({ffd700}%s{FFFFFF}){FFFFFF}!", playerData.rank, playerData.fraction))
         else
@@ -565,17 +572,6 @@ function sampev.onShowDialog(id, style, title, button1, button2, text)
         end
         return false
     end
-end
-
--- Command"s hook
-
-
-function sendRPCCommand(text)
-    local bs = raknetNewBitStream()
-    raknetBitStreamWriteInt32(bs, #text)
-    raknetBitStreamWriteString(bs, text)
-    raknetSendRpc(rn.RPC.SERVERCOMMAND, bs)
-    raknetDeleteBitStream(bs)
 end
 
 -- Imgui stuff..
