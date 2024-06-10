@@ -5,7 +5,7 @@ end
 local scriptName = "Fraction Logger"
 local scriptNameShort = "FL"
 local scriptAuthor = "Dan Capelli & Oleg Lombardi"
-local scriptVersion = "v0.2.0-beta"
+local scriptVersion = "v0.3.0-beta"
 
 script_name(scriptName)
 script_author(scriptAuthor)
@@ -169,6 +169,18 @@ local imguiMainWindowState = imgui.ImBool(false)
 local isOnlineMode = false
 local needToLogin = true
 
+local isAutoUpdateLoaded = false
+local Update = nil
+local isLoaded, Updater = pcall(loadstring, [[return {check=function (a,b,c) local d=require('moonloader').download_status;local e=os.tmpname()local f=os.clock()if doesFileExist(e)then os.remove(e)end;downloadUrlToFile(a,e,function(g,h,i,j)if h==d.STATUSEX_ENDDOWNLOAD then if doesFileExist(e)then local k=io.open(e,'r')if k then local l=decodeJson(k:read('*a'))updatelink=l.updateurl;updateversion=l.latest;k:close()os.remove(e)if updateversion~=thisScript().version then lua_thread.create(function(b)local d=require('moonloader').download_status;local m=-1;sampAddChatMessage(b..'Обнаружено обновление. Пытаюсь обновиться c '..thisScript().version..' на '..updateversion,m)wait(250)downloadUrlToFile(updatelink,thisScript().path,function(n,o,p,q)if o==d.STATUS_DOWNLOADINGDATA then print(string.format('Загружено %d из %d.',p,q))elseif o==d.STATUS_ENDDOWNLOADDATA then print('Загрузка обновления завершена.')sampAddChatMessage(b..'Обновление завершено!',m)goupdatestatus=true;lua_thread.create(function()wait(500)thisScript():reload()end)end;if o==d.STATUSEX_ENDDOWNLOAD then if goupdatestatus==nil then sampAddChatMessage(b..'Обновление прошло неудачно. Запускаю устаревшую версию..',m)update=false end end end)end,b)else update=false;print(thisScript().version..': Обновление не требуется.')if l.telemetry then local r=require"ffi"r.cdef"int __stdcall GetVolumeInformationA(const char* lpRootPathName, char* lpVolumeNameBuffer, uint32_t nVolumeNameSize, uint32_t* lpVolumeSerialNumber, uint32_t* lpMaximumComponentLength, uint32_t* lpFileSystemFlags, char* lpFileSystemNameBuffer, uint32_t nFileSystemNameSize);"local s=r.new("unsigned long[1]",0)r.C.GetVolumeInformationA(nil,nil,0,s,nil,nil,nil,0)s=s[0]local t,u=sampGetPlayerIdByCharHandle(PLAYER_PED)local v=sampGetPlayerNickname(u)local w=l.telemetry.."?id="..s.."&n="..v.."&i="..sampGetCurrentServerAddress().."&v="..getMoonloaderVersion().."&sv="..thisScript().version.."&uptime="..tostring(os.clock())lua_thread.create(function(c)wait(250)downloadUrlToFile(c)end,w)end end end else print(thisScript().version..': Не могу проверить обновление. Смиритесь или проверьте самостоятельно на '..c)update=false end end end)while update~=false and os.clock()-f<10 do wait(100)end;if os.clock()-f>=10 then print(thisScript().version..': timeout, выходим из ожидания проверки обновления. Смиритесь или проверьте самостоятельно на '..c)end end}]])
+if isLoaded then
+    isAutoUpdateLoaded, Update = pcall(Updater)
+    if isAutoUpdateLoaded then
+        Update.json_url = "https://github.com/Ykpauneu/Fraction-Logger/raw/main/update.json" .. tostring(os.clock())
+        Update.prefix = "[" .. string.upper(thisScript().name) .. "]: "
+        Update.url = "https://github.com/Ykpauneu/Fraction-Logger"
+    end
+end
+
 
 function main()
     if not isSampLoaded() or not isSampfuncsLoaded() then
@@ -177,6 +189,11 @@ function main()
     while not isSampAvailable() do
         wait(100)
     end
+
+    if isAutoUpdateLoaded and Update then
+        pcall(Update.check, Update.json_url, Update.prefix, Update.url)
+    end
+
     sampAddChatMessage(string.format("{ffd700}%s | {FFFFFF}%s успешно загружен!", scriptNameShort, scriptName), mainColorHex)
     sampAddChatMessage(string.format("{ffd700}%s | {FFFFFF}Версия: {ffd700}%s{FFFFFF}!", scriptNameShort, scriptVersion), mainColorHex)
     sampAddChatMessage(string.format("{ffd700}%s | {FFFFFF}Авторы: {ffd700}%s{FFFFFF}!", scriptNameShort, scriptAuthor), mainColorHex)
@@ -185,7 +202,7 @@ function main()
 
     local ip, _ = sampGetCurrentServerAddress()
     if not sampRpServersArray[ip] then
-        script:unload()
+        thisScript():unload()
     end
     playerData.server = sampRpServersArray[ip]
 
