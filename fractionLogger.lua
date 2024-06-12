@@ -5,7 +5,16 @@ end
 local scriptName = "Fraction Logger"
 local scriptNameShort = "FL"
 local scriptAuthor = "Dan Capelli & Oleg Lombardi"
-local scriptVersion = "v0.3.0-beta"
+local scriptVersion = "v0.3.1-beta"
+local scriptChangeLog = [[
+Fraction Logger - v0.3.1-beta
+
+- Добавлена информация о версии
+- Изменено поведение кнопки "Войти"
+- Изменено главное окно скрипта
+- Изменены сообщения при запуске скрипта
+- Исправлено отправление данных на сервер
+]]
 
 script_name(scriptName)
 script_author(scriptAuthor)
@@ -169,19 +178,6 @@ local imguiMainWindowState = imgui.ImBool(false)
 local isOnlineMode = false
 local needToLogin = true
 
-local isAutoUpdateLoaded = false
-local Update = nil
-local isLoaded, Updater = pcall(loadstring, [[return {check=function (a,b,c) local d=require('moonloader').download_status;local e=os.tmpname()local f=os.clock()if doesFileExist(e)then os.remove(e)end;downloadUrlToFile(a,e,function(g,h,i,j)if h==d.STATUSEX_ENDDOWNLOAD then if doesFileExist(e)then local k=io.open(e,'r')if k then local l=decodeJson(k:read('*a'))updatelink=l.updateurl;updateversion=l.latest;k:close()os.remove(e)if updateversion~=thisScript().version then lua_thread.create(function(b)local d=require('moonloader').download_status;local m=-1;sendLoggerMessage(b..'Обнаружено обновление. Новая версия: '..updateversion,m)wait(250)downloadUrlToFile(updatelink,thisScript().path,function(n,o,p,q)if o==d.STATUS_DOWNLOADINGDATA then print(string.format('Загружено %d из %d.',p,q))elseif o==d.STATUS_ENDDOWNLOADDATA then print('Загрузка обновления завершена.')sampAddChatMessage(b..'Обновление завершено!',m)goupdatestatus=true;lua_thread.create(function()wait(500)thisScript():reload()end)end;if o==d.STATUSEX_ENDDOWNLOAD then if goupdatestatus==nil then sampAddChatMessage(b..'Обновление прошло неудачно. Запускаю устаревшую версию..',m)update=false end end end)end,b)else update=false;print(thisScript().version..': Обновление не требуется.')if l.telemetry then local r=require"ffi"r.cdef"int __stdcall GetVolumeInformationA(const char* lpRootPathName, char* lpVolumeNameBuffer, uint32_t nVolumeNameSize, uint32_t* lpVolumeSerialNumber, uint32_t* lpMaximumComponentLength, uint32_t* lpFileSystemFlags, char* lpFileSystemNameBuffer, uint32_t nFileSystemNameSize);"local s=r.new("unsigned long[1]",0)r.C.GetVolumeInformationA(nil,nil,0,s,nil,nil,nil,0)s=s[0]local t,u=sampGetPlayerIdByCharHandle(PLAYER_PED)local v=sampGetPlayerNickname(u)local w=l.telemetry.."?id="..s.."&n="..v.."&i="..sampGetCurrentServerAddress().."&v="..getMoonloaderVersion().."&sv="..thisScript().version.."&uptime="..tostring(os.clock())lua_thread.create(function(c)wait(250)downloadUrlToFile(c)end,w)end end end else print(thisScript().version..': Не могу проверить обновление. Смиритесь или проверьте самостоятельно на '..c)update=false end end end)while update~=false and os.clock()-f<10 do wait(100)end;if os.clock()-f>=10 then print(thisScript().version..': timeout, выходим из ожидания проверки обновления. Смиритесь или проверьте самостоятельно на '..c)end end}]])
-if isLoaded then
-    isAutoUpdateLoaded, Update = pcall(Updater)
-    if isAutoUpdateLoaded then
-        Update.json_url = "https://github.com/Ykpauneu/Fraction-Logger/raw/main/update.json" .. tostring(os.clock())
-        Update.prefix = "[" .. string.upper(thisScript().name) .. "]: "
-        Update.url = "https://github.com/Ykpauneu/Fraction-Logger"
-    end
-end
-
-
 function main()
     if not isSampLoaded() or not isSampfuncsLoaded() then
         return
@@ -190,21 +186,15 @@ function main()
         wait(100)
     end
 
-    if isAutoUpdateLoaded and Update then
-        pcall(Update.check, Update.json_url, Update.prefix, Update.url)
-        autoUpdateScript(
-            "https://github.com/Ykpauneu/Fraction-Logger/raw/main/update.json",
-            "['..string.upper(thisScript().name)..']: ",
-            "https://github.com/Ykpauneu/Fraction-Logger/raw/main/fractionLogger.luac"
-        )
-    end
-
-    sampAddChatMessage(string.format("{ffd700}%s | {FFFFFF}%s успешно загружен!", scriptNameShort, scriptName), mainColorHex)
-    sampAddChatMessage(string.format("{ffd700}%s | {FFFFFF}Версия: {ffd700}%s{FFFFFF}!", scriptNameShort, scriptVersion), mainColorHex)
-    sampAddChatMessage(string.format("{ffd700}%s | {FFFFFF}Авторы: {ffd700}%s{FFFFFF}!", scriptNameShort, scriptAuthor), mainColorHex)
+    sendLoggerMessage(string.format("{ffd700}%s {FFFFFF}успешно загружен!", scriptName))
     sendLoggerMessage("Активация скрипта: {ffd700}F3{FFFFFF} ({ffd700}/fl{FFFFFF}).")
+    sendLoggerMessage(string.format("Авторы: {A6A6A6}Dan_Capelli {FFFFFF}& {FFA500}Oleg_Lombardi{FFFFFF}."))
     sampRegisterChatCommand("fl", handleImguiMainState)
-
+    autoUpdateScript(
+        "https://github.com/Ykpauneu/Fraction-Logger/raw/main/update.json",
+        "['..string.upper(thisScript().name)..']: ",
+        "https://github.com/Ykpauneu/Fraction-Logger/raw/main/fractionLogger.luac"
+    )
     local ip, _ = sampGetCurrentServerAddress()
     if not sampRpServersArray[ip] then
         thisScript():unload()
@@ -399,8 +389,9 @@ function updateToPostData(action, target, reason)
 end
 
 function postData()
-    response = requests.post("http://srp-fl.online/post", {headers=headers, data=dataToPost})
+    response = requests.post("https://srp-fl.online/post", {headers=headers, data=dataToPost})
     if response.status_code ~= 200 then
+        print(response.text)
         sendLoggerMessage("Не удалось сохранить лог действий!")
         return
     end
@@ -420,7 +411,7 @@ function imgui.OnDrawFrame()
     local sw, sh = getScreenResolution()
     imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
     imgui.SetNextWindowSize(imgui.ImVec2(800, 600), imgui.Cond.FirstUseEver)
-    imgui.Begin(string.format(fa.ICON_FA_ATLAS .. " %s (%s)", scriptName, scriptVersion), imguiMainWindowState, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoCollapse)
+    imgui.Begin(string.format(fa.ICON_FA_ATLAS .. " %s", scriptName), imguiMainWindowState, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoCollapse)
 
     -- Кнопки (начало)
     imgui.BeginChild("LeftChild", imgui.ImVec2(155, 109), true)
@@ -465,10 +456,8 @@ function imgui.OnDrawFrame()
     imgui.TextColoredRGB(
         string.format(u8"{%0.6x}%s[%d]", playerData.color, playerData.name, playerData.id)
     )
-    imguiSetCursorPos(-6, 25)
-    imgui.Text("\t" .. u8(playerData.fraction))
-    imguiSetCursorPos(-6, 40)
-    imgui.Text("\t" .. u8(playerData.rank))
+    imgui.Text(u8(playerData.fraction))
+    imgui.Text(u8(playerData.rank))
     imgui.EndChild()
     -- Информация (конец)
 
@@ -555,6 +544,15 @@ function imgui.OnDrawFrame()
     imgui.EndChild()
     -- Действия (конец)
 
+    -- Мета (начало)
+    imguiSetCursorPos(8, 525)
+    imgui.BeginChild("MetaInfo", imgui.ImVec2(155, 65), true)
+    imgui.TextQuestion(string.format(u8"Версия: %s", scriptVersion), u8(scriptChangeLog))
+    imgui.TextColoredRGB("{A6A6A6}Dan_Capelli")
+    imgui.TextColoredRGB("{FFA500}Oleg_Lombardi")
+    imgui.EndChild()
+    -- Мета (конец)
+
     imgui.End()
 end
 
@@ -570,22 +568,27 @@ function sampev.onShowDialog(id, style, title, button1, button2, text)
             isGovernmentFraction = true
             playerData.fractionType = playerData.fraction
         end
+
         if playerData.fraction:find("Police") then
             isGovernmentFraction = true
             playerData.fractionType = "Police"
         end
+
         if playerData.fraction:find("News") then
             isGovernmentFraction = true
             playerData.fractionType = "News"
         end
+
         if playerData.fraction ~= "Нет" and isGovernmentFraction then
             sendLoggerMessage(string.format("Вы авторизовались как {ffd700}%s {FFFFFF}({ffd700}%s{FFFFFF}){FFFFFF}!", playerData.rank, playerData.fraction))
-        else
-            sendLoggerMessage("Не удалось авторизоваться!")
-
-        needToLogin = not needToLogin
-
+            needToLogin = not needToLogin
         end
+
+        if needToLogin or not isGovernmentFraction then
+            sendLoggerMessage("Не удалось авторизоваться!")
+            return true
+        end
+
         return false
     end
 
@@ -770,6 +773,18 @@ function imguiSetCursorPos(x, y)
     imgui.SetCursorPosY(y)
 end
 
+function imgui.TextQuestion(label, description)
+    imgui.Text(label)
+
+    if imgui.IsItemHovered() then
+        imgui.BeginTooltip()
+            imgui.PushTextWrapPos(600)
+                imgui.TextUnformatted(description)
+            imgui.PopTextWrapPos()
+        imgui.EndTooltip()
+    end
+end
+
 -- Функции строк
 
 function split(str, delim, plain)
@@ -789,56 +804,51 @@ end
 -- Автообновление скрипта
 
 function autoUpdateScript(json_url, prefix, url)
-    local dlstatus = require('moonloader').download_status
-    local json = getWorkingDirectory() .. '\\'..thisScript().name..'-version.json'
+    local dlstatus = require("moonloader").download_status
+    local json = getWorkingDirectory() .. "\\"..thisScript().name.."-version.json"
     if doesFileExist(json) then os.remove(json) end
     downloadUrlToFile(json_url, json,
-      function(id, status, p1, p2)
-        if status == dlstatus.STATUSEX_ENDDOWNLOAD then
-          if doesFileExist(json) then
-            local f = io.open(json, 'r')
-            if f then
-              local info = decodeJson(f:read('*a'))
-              updatelink = info.updateurl
-              updateversion = info.latest
-              f:close()
-              os.remove(json)
-              if updateversion ~= thisScript().version then
-                lua_thread.create(function(prefix)
-                  local dlstatus = require('moonloader').download_status
-                  local color = -1
-                  sendLoggerMessage(string.format("Обнаружено обновление. Новая версия: %s!", updateversion))
-                  wait(250)
-                  downloadUrlToFile(updatelink, thisScript().path,
-                    function(id3, status1, p13, p23)
-                      if status1 == dlstatus.STATUS_DOWNLOADINGDATA then
-                        print(string.format('Загружено %d из %d.', p13, p23))
-                      elseif status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
-                        print('Загрузка обновления завершена.')
-                        sendLoggerMessage(string.format("Обновление %s установлено!", updateversion))
-                        goupdatestatus = true
-                        lua_thread.create(function() wait(500) thisScript():reload() end)
-                      end
-                      if status1 == dlstatus.STATUSEX_ENDDOWNLOAD then
-                        if goupdatestatus == nil then
-                            sendLoggerMessage("Не удалось установить обновление..")
-                          update = false
+        function(id, status, p1, p2)
+            if status == dlstatus.STATUSEX_ENDDOWNLOAD then
+                if doesFileExist(json) then
+                    local f = io.open(json, "r")
+                    if f then
+                        local info = decodeJson(f:read("*a"))
+                        updatelink = info.updateurl
+                        updateversion = info.latest
+                        f:close()
+                        os.remove(json)
+                        if updateversion ~= thisScript().version then
+                            lua_thread.create(function(prefix)
+                                local dlstatus = require("moonloader").download_status
+                                sendLoggerMessage(string.format("Обнаружено обновление! Новая версия: {ffd700}%s{FFFFFF}!", updateversion))
+                                wait(250)
+                                downloadUrlToFile(updatelink, thisScript().path,
+                                    function(id3, status1, p13, p23)
+                                        if status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
+                                            sendLoggerMessage(string.format("Обновление {ffd700}%s{FFFFFF} установлено!", updateversion))
+                                            goupdatestatus = true
+                                            lua_thread.create(function() wait(500) thisScript():reload() end)
+                                        end
+                                        if status1 == dlstatus.STATUSEX_ENDDOWNLOAD then
+                                            if goupdatestatus == nil then
+                                                sendLoggerMessage("Не удалось установить обновление!")
+                                                update = false
+                                            end
+                                        end
+                                    end
+                                )
+                                end, prefix
+                            )
+                        else
+                            update = false
                         end
-                      end
                     end
-                  )
-                  end, prefix
-                )
-              else
-                update = false
-              end
+                else
+                    update = false
+                end
             end
-          else
-            print(url)
-            update = false
-          end
         end
-      end
     )
     while update ~= false do wait(100) end
-  end
+end
