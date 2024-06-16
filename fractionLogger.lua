@@ -5,15 +5,14 @@ end
 local scriptName = "Fraction Logger"
 local scriptNameShort = "FL"
 local scriptAuthor = "Dan Capelli & Oleg Lombardi"
-local scriptVersion = "v0.3.1-beta"
+local scriptVersion = "v0.4.0-beta"
 local scriptChangeLog = [[
-Fraction Logger - v0.3.1-beta
+Fraction Logger - v0.4.0-beta
 
-- Добавлена информация о версии
-- Изменено поведение кнопки "Войти"
-- Изменено главное окно скрипта
-- Изменены сообщения при запуске скрипта
-- Исправлено отправление данных на сервер
+- Добавлена возможность выгрузки offmembers'а на сайт
+- Изменено отображение таблицы состава онлайн
+- Убрана кнопка обновить
+- Небольшие исправления
 ]]
 
 script_name(scriptName)
@@ -34,6 +33,7 @@ local weakToken = ".EUBT38+,Q~^H.M}E_KmNQ=E9yep}~wv_eot*Jtc#R5%@QKN0LnN+1}Pi7s?e
 local fa_font = nil
 local fa_glyph_ranges = imgui.ImGlyphRanges({fa.min_range, fa.max_range})
 local mainColorHex = 0xFFFFFFFFF
+local postCooldown = 0
 
 local rankArray = {
     ["Police"] = {
@@ -124,6 +124,7 @@ local rankArray = {
         u8"Генеральный Директор",
     }
 }
+
 local playerData = {
     name = u8"Нет",
     id = -1,
@@ -133,6 +134,7 @@ local playerData = {
     rank = u8" ",
     server = nil,
 }
+
 local membersPool = {}
 local offMembersPool = {}
 local selectedMember = {
@@ -143,6 +145,7 @@ local selectedMember = {
     totalOnline = nil,
     lastOnline = nil
 }
+
 local commandsArray = {
     giverank = {
         [true] = "giverank",
@@ -168,10 +171,19 @@ local sampRpServersArray = {
     ["141.95.72.156"] = "Legacy",
     ["51.89.8.242"] = "Underground",
 }
+
 local headers = {
     ["Content-Type"] = "application/json",
-    ["WeakToken"] = weakToken
+    ["WeakToken"] = weakToken,
+    ["Server"] = nil,
+    ["Fraction"] = nil
 }
+
+local postUrl = {
+    [true] = "https://srp-fl.online/post",
+    [false] = "https://srp-fl.online/post_offmembers",
+}
+
 local dataToPost = {}
 
 local imguiMainWindowState = imgui.ImBool(false)
@@ -243,7 +255,9 @@ function sampev.onServerMessage(color, message)
         or message:find(string.format("Вы понизили %s", dataToPost.target))
         or message:find(string.format("Вы приняли %s", dataToPost.target))
         or message:find(string.format("Вы выгнали %s", dataToPost.target)) then
-            lua_thread.create(postData)
+            lua_thread.create(function ()
+                postData(dataToPost, true)
+            end)
         end
     end
 end
@@ -379,8 +393,6 @@ function sampev.onSendCommand(commandText)
 end
 
 function updateToPostData(action, target, reason)
-    dataToPost.server = u8(playerData.server)
-    dataToPost.fraction = u8(playerData.fraction)
     dataToPost.author = playerData.name
     dataToPost.action = u8(action)
     dataToPost.target = target
@@ -388,15 +400,27 @@ function updateToPostData(action, target, reason)
     dataToPost.date = os.date("%d.%m.%Y %H:%M:%S")
 end
 
-function postData()
-    response = requests.post("https://srp-fl.online/post", {headers=headers, data=dataToPost})
+function postData(data, isLog)
+    headers["Server"] = u8(playerData.server)
+    headers["Fraction"] = u8(playerData.fraction)
+    if not isLog then
+        local d = {}
+        for k, v in pairs(data) do
+            d[k] = {
+                string.format("%s [%s]", rankArray[playerData.fractionType][tonumber(v[1])], v[1]),
+                string.format(u8"%s часов", v[2]),
+                v[3]
+            }
+        end
+        data = d
+    end
+
+    response = requests.post(postUrl[isLog], {headers=headers, data=data})
     if response.status_code ~= 200 then
-        print(response.text)
-        sendLoggerMessage("Не удалось сохранить лог действий!")
+        sendLoggerMessage(string.format("Не удалось сохранить лог действий! (%s)", response.status_code))
         return
     end
     sendLoggerMessage("Данные отправлены..")
-    dataToPost = {}
 end
 
 function imgui.BeforeDrawFrame()
@@ -431,11 +455,8 @@ function imgui.OnDrawFrame()
             end)
 
     end
-    if imgui.ButtonClickable(not needToLogin, fa.ICON_FA_SYNC .. u8" Обновить", imgui.ImVec2(140, 20)) then
-        selectedMember = {}
-        if isOnlineMode then
-            sampSendChat("/members 1")
-        else
+    if imgui.ButtonClickable(not needToLogin and not isOnlineMode, fa.ICON_FA_CLOUD_UPLOAD_ALT .. u8" Выгрузить", imgui.ImVec2(140, 20)) then
+        if offMembersPool == {} then
             lua_thread.create(
                 function ()
                     sampSendChat("/offmfilter clear")
@@ -443,7 +464,9 @@ function imgui.OnDrawFrame()
                     sampSendChat("/offmembers 1")
                 end)
         end
+        postData(offMembersPool, false)
     end
+
     if imgui.ButtonClickable(needToLogin, fa.ICON_FA_SIGN_IN_ALT .. u8" Войти", imgui.ImVec2(140, 20)) then
         sampSendChat("/stats")
     end
@@ -468,9 +491,9 @@ function imgui.OnDrawFrame()
         imgui.Columns(3, "MainColumns", false)
         imgui.Text(fa.ICON_FA_ID_CARD .. u8" Никнейм[ID]")
         imgui.NextColumn()
-        imgui.Text("\t" .. fa.ICON_FA_CHART_LINE .. u8" Ранг[*]")
+        imgui.Text(fa.ICON_FA_CHART_LINE .. u8" Ранг[*]")
         imgui.NextColumn()
-        imgui.Text("\t" .. fa.ICON_FA_BED .. " AFK/Sleep")
+        imgui.Text(fa.ICON_FA_BED .. " AFK/Sleep")
         for imguiMemberName, imguiMemberAttrs in pairs(membersPool) do
             imgui.NextColumn()
             if imgui.Selectable(string.format(u8"%s %s", imguiMemberName, imguiMemberAttrs[1]), false, imgui.SelectableFlags.SpanAllColumns) then
@@ -598,7 +621,7 @@ function sampev.onShowDialog(id, style, title, button1, button2, text)
             if dialogText:find("(%[%d+])%s(%w+_%w+)(%A+%s%[%d+])") then
                 local memberId, memberName, memberRank, memberAfk = dialogText:match("(%[%d+])%s(%w+_%w+)(%A+%s%[%d+])(.+)")
 
-                membersPool[memberName] = {memberId, memberRank, memberAfk}
+                membersPool[memberName] = {memberId, memberRank:gsub("\t", ""), memberAfk:gsub("\t", "")}
             end
         end
         return false
