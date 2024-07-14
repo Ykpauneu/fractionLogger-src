@@ -9,10 +9,8 @@ local scriptVersion = "v0.4.1-beta"
 local scriptChangeLog = [[
 Fraction Logger - v0.4.1-beta
 
-- Добавлена возможность выгрузки offmembers'а на сайт
-- Изменено отображение таблицы состава онлайн
-- Убрана кнопка обновить
-- Небольшие исправления
+- Исправлены логи для фракции Medic
+
 ]]
 
 script_name(scriptName)
@@ -860,7 +858,7 @@ function autoUpdateScript(json_url, prefix, url)
                                 downloadUrlToFile(updatelink, thisScript().path,
                                     function(id3, status1, p13, p23)
                                         if status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
-                                            sendLoggerMessage(string.format("Обновление {ffd700}%s{FFFFFF} установлено!", updateversion))
+                                            sendLoggerMessage(string.format("Обновление {ffd700}%s{FFFFFF} было установлено!", updateversion))
                                             goupdatestatus = true
                                             lua_thread.create(function() wait(500) thisScript():reload() end)
                                         end
