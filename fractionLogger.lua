@@ -5,12 +5,11 @@ end
 local scriptName = "Fraction Logger"
 local scriptNameShort = "FL"
 local scriptAuthor = "Dan Capelli & Oleg Lombardi"
-local scriptVersion = "v0.4.1-beta"
+local scriptVersion = "v0.4.2-beta"
 local scriptChangeLog = [[
-Fraction Logger - v0.4.1-beta
+Fraction Logger - v0.4.2-beta
 
-- Исправлены логи для фракции Medic
-
+- РСЃРїСЂР°РІР»РµРЅ Р±Р°Рі Р°РІС‚РѕСЂРёР·Р°С†РёРё
 ]]
 
 script_name(scriptName)
@@ -34,108 +33,108 @@ local mainColorHex = 0xFFFFFFFFF
 
 local rankArray = {
     ["Police"] = {
-        u8"Кадет",
-        u8"Офицер",
-        u8"Мл. Сержант",
-        u8"Сержант",
-        u8"Прапорщик",
-        u8"Ст. Прапорщик",
-        u8"Мл. Лейтенант",
-        u8"Лейтенант",
-        u8"Ст. Лейтенант",
-        u8"Капитан",
-        u8"Майор",
-        u8"Подполковник",
-        u8"Полковник",
-        u8"Шериф"
+        u8"РљР°РґРµС‚",
+        u8"РћС„РёС†РµСЂ",
+        u8"РњР». РЎРµСЂР¶Р°РЅС‚",
+        u8"РЎРµСЂР¶Р°РЅС‚",
+        u8"РџСЂР°РїРѕСЂС‰РёРє",
+        u8"РЎС‚. РџСЂР°РїРѕСЂС‰РёРє",
+        u8"РњР». Р›РµР№С‚РµРЅР°РЅС‚",
+        u8"Р›РµР№С‚РµРЅР°РЅС‚",
+        u8"РЎС‚. Р›РµР№С‚РµРЅР°РЅС‚",
+        u8"РљР°РїРёС‚Р°РЅ",
+        u8"РњР°Р№РѕСЂ",
+        u8"РџРѕРґРїРѕР»РєРѕРІРЅРёРє",
+        u8"РџРѕР»РєРѕРІРЅРёРє",
+        u8"РЁРµСЂРёС„"
     },
     ["Army SF"] = {
-        u8"Юнга",
-        u8"Матрос",
-        u8"Ст. Матрос",
-        u8"Старшина",
-        u8"Мл. Мичман",
-        u8"Мичман",
-        u8"Ст. Мичман",
-        u8"Мл. Лейтенант",
-        u8"Лейтенант",
-        u8"Ст. Лейтенант",
-        u8"Капитан-Лейтенант",
-        u8"Ст. Матрос",
-        u8"Контр-Адмирал",
-        u8"Вице-Адмирал",
-        u8"Адмирал",
+        u8"Р®РЅРіР°",
+        u8"РњР°С‚СЂРѕСЃ",
+        u8"РЎС‚. РњР°С‚СЂРѕСЃ",
+        u8"РЎС‚Р°СЂС€РёРЅР°",
+        u8"РњР». РњРёС‡РјР°РЅ",
+        u8"РњРёС‡РјР°РЅ",
+        u8"РЎС‚. РњРёС‡РјР°РЅ",
+        u8"РњР». Р›РµР№С‚РµРЅР°РЅС‚",
+        u8"Р›РµР№С‚РµРЅР°РЅС‚",
+        u8"РЎС‚. Р›РµР№С‚РµРЅР°РЅС‚",
+        u8"РљР°РїРёС‚Р°РЅ-Р›РµР№С‚РµРЅР°РЅС‚",
+        u8"РЎС‚. РњР°С‚СЂРѕСЃ",
+        u8"РљРѕРЅС‚СЂ-РђРґРјРёСЂР°Р»",
+        u8"Р’РёС†Рµ-РђРґРјРёСЂР°Р»",
+        u8"РђРґРјРёСЂР°Р»",
     },
     ["Army LV"] = {
-        u8"Рядовой",
-        u8"Ефрейтор",
-        u8"Мл.сержант",
-        u8"Сержант",
-        u8"Ст. Сержант",
-        u8"Старшина",
-        u8"Прапорщик",
-        u8"Мл. Лейтенант",
-        u8"Лейтенант",
-        u8"Ст. Лейтенант",
-        u8"Капитан",
-        u8"Майор",
-        u8"Подполковник",
-        u8"Полковник",
-        u8"Генерал",
+        u8"Р СЏРґРѕРІРѕР№",
+        u8"Р•С„СЂРµР№С‚РѕСЂ",
+        u8"РњР».СЃРµСЂР¶Р°РЅС‚",
+        u8"РЎРµСЂР¶Р°РЅС‚",
+        u8"РЎС‚. РЎРµСЂР¶Р°РЅС‚",
+        u8"РЎС‚Р°СЂС€РёРЅР°",
+        u8"РџСЂР°РїРѕСЂС‰РёРє",
+        u8"РњР». Р›РµР№С‚РµРЅР°РЅС‚",
+        u8"Р›РµР№С‚РµРЅР°РЅС‚",
+        u8"РЎС‚. Р›РµР№С‚РµРЅР°РЅС‚",
+        u8"РљР°РїРёС‚Р°РЅ",
+        u8"РњР°Р№РѕСЂ",
+        u8"РџРѕРґРїРѕР»РєРѕРІРЅРёРє",
+        u8"РџРѕР»РєРѕРІРЅРёРє",
+        u8"Р“РµРЅРµСЂР°Р»",
     },
     ["FBI"] = {
-        u8"Стажёр",
-        u8"Дежурный",
-        u8"Мл. Агент",
-        u8"Агент DEA",
-        u8"Агент CID",
-        u8"Глава DEA",
-        u8"Глава CID",
-        u8"Инспектор FBI",
-        u8"Зам. Директора FBI",
-        u8"Директор FBI",
+        u8"РЎС‚Р°Р¶С‘СЂ",
+        u8"Р”РµР¶СѓСЂРЅС‹Р№",
+        u8"РњР». РђРіРµРЅС‚",
+        u8"РђРіРµРЅС‚ DEA",
+        u8"РђРіРµРЅС‚ CID",
+        u8"Р“Р»Р°РІР° DEA",
+        u8"Р“Р»Р°РІР° CID",
+        u8"РРЅСЃРїРµРєС‚РѕСЂ FBI",
+        u8"Р—Р°Рј. Р”РёСЂРµРєС‚РѕСЂР° FBI",
+        u8"Р”РёСЂРµРєС‚РѕСЂ FBI",
     },
     ["Mayor"] = {
-        u8"Секретарь",
-        u8"Адвокат",
-        u8"Охранник",
-        u8"Нач. Охраны",
-        u8"Нач. Профсоюза",
-        u8"Зам. Мэра",
-        u8"Мэр",
+        u8"РЎРµРєСЂРµС‚Р°СЂСЊ",
+        u8"РђРґРІРѕРєР°С‚",
+        u8"РћС…СЂР°РЅРЅРёРє",
+        u8"РќР°С‡. РћС…СЂР°РЅС‹",
+        u8"РќР°С‡. РџСЂРѕС„СЃРѕСЋР·Р°",
+        u8"Р—Р°Рј. РњСЌСЂР°",
+        u8"РњСЌСЂ",
     },
     ["Instructors"] = {
-        u8"Стажёр",
-        u8"Консультант"
+        u8"РЎС‚Р°Р¶С‘СЂ",
+        u8"РљРѕРЅСЃСѓР»СЊС‚Р°РЅС‚"
     },
     ["News"] = {
-        u8"Стажер",
-        u8"Звукооператор",
-        u8"Звукорежиссер",
-        u8"Репортёр",
-        u8"Ведущий",
-        u8"Редактор",
-        u8"Главный Редактор",
-        u8"Технический Директор",
-        u8"Программный Директор",
-        u8"Генеральный Директор",
+        u8"РЎС‚Р°Р¶РµСЂ",
+        u8"Р—РІСѓРєРѕРѕРїРµСЂР°С‚РѕСЂ",
+        u8"Р—РІСѓРєРѕСЂРµР¶РёСЃСЃРµСЂ",
+        u8"Р РµРїРѕСЂС‚С‘СЂ",
+        u8"Р’РµРґСѓС‰РёР№",
+        u8"Р РµРґР°РєС‚РѕСЂ",
+        u8"Р“Р»Р°РІРЅС‹Р№ Р РµРґР°РєС‚РѕСЂ",
+        u8"РўРµС…РЅРёС‡РµСЃРєРёР№ Р”РёСЂРµРєС‚РѕСЂ",
+        u8"РџСЂРѕРіСЂР°РјРјРЅС‹Р№ Р”РёСЂРµРєС‚РѕСЂ",
+        u8"Р“РµРЅРµСЂР°Р»СЊРЅС‹Р№ Р”РёСЂРµРєС‚РѕСЂ",
     },
     ["Medic"] = {
-        u8"Мед. работник",
-        u8"Старший мед. работник",
-        u8"Фельдшер",
-        u8"Интерн",
-        u8"Нарколог",
-        u8"Психиатр",
-        u8"Терапевт",
-        u8"Хирург",
-        u8"Зам.Глав.Врача",
-        u8"Главный Врач",
+        u8"РњРµРґ. СЂР°Р±РѕС‚РЅРёРє",
+        u8"РЎС‚Р°СЂС€РёР№ РјРµРґ. СЂР°Р±РѕС‚РЅРёРє",
+        u8"Р¤РµР»СЊРґС€РµСЂ",
+        u8"РРЅС‚РµСЂРЅ",
+        u8"РќР°СЂРєРѕР»РѕРі",
+        u8"РџСЃРёС…РёР°С‚СЂ",
+        u8"РўРµСЂР°РїРµРІС‚",
+        u8"РҐРёСЂСѓСЂРі",
+        u8"Р—Р°Рј.Р“Р»Р°РІ.Р’СЂР°С‡Р°",
+        u8"Р“Р»Р°РІРЅС‹Р№ Р’СЂР°С‡",
     },
 }
 
 local playerData = {
-    name = u8"Нет",
+    name = u8"РќРµС‚",
     id = -1,
     color = nil,
     fraction = u8" ",
@@ -167,12 +166,12 @@ local commandsArray = {
 }
 
 local actionsArray = {
-    ["/invite"] = "Принятие",
-    ["/iinvite"] = "Перевод",
-    ["/uninvite"] = "Увольнение",
-    ["/giverank"] = "Изменение ранга",
-    ["/offuninvite"] = "Увольнение (оффлайн)",
-    ["/offgiverank"] = "Изменение ранга (оффлайн)"
+    ["/invite"] = "РџСЂРёРЅСЏС‚РёРµ",
+    ["/iinvite"] = "РџРµСЂРµРІРѕРґ",
+    ["/uninvite"] = "РЈРІРѕР»СЊРЅРµРЅРёРµ",
+    ["/giverank"] = "РР·РјРµРЅРµРЅРёРµ СЂР°РЅРіР°",
+    ["/offuninvite"] = "РЈРІРѕР»СЊРЅРµРЅРёРµ (РѕС„С„Р»Р°Р№РЅ)",
+    ["/offgiverank"] = "РР·РјРµРЅРµРЅРёРµ СЂР°РЅРіР° (РѕС„С„Р»Р°Р№РЅ)"
 }
 
 local sampRpServersArray = {
@@ -207,9 +206,9 @@ function main()
         wait(100)
     end
 
-    sendLoggerMessage(string.format("{ffd700}%s {FFFFFF}успешно загружен!", scriptName))
-    sendLoggerMessage("Активация скрипта: {ffd700}F3{FFFFFF} ({ffd700}/fl{FFFFFF}).")
-    sendLoggerMessage(string.format("Авторы: {A6A6A6}Dan_Capelli {FFFFFF}& {FFA500}Oleg_Lombardi{FFFFFF}."))
+    sendLoggerMessage(string.format("{ffd700}%s {FFFFFF}СѓСЃРїРµС€РЅРѕ Р·Р°РіСЂСѓР¶РµРЅ!", scriptName))
+    sendLoggerMessage("РђРєС‚РёРІР°С†РёСЏ СЃРєСЂРёРїС‚Р°: {ffd700}F3{FFFFFF} ({ffd700}/fl{FFFFFF}).")
+    sendLoggerMessage(string.format("РђРІС‚РѕСЂС‹: {A6A6A6}Dan_Capelli {FFFFFF}& {FFA500}Oleg_Lombardi{FFFFFF}."))
     sampRegisterChatCommand("fl", handleImguiMainState)
     autoUpdateScript(
         "https://github.com/Ykpauneu/Fraction-Logger/raw/main/update.json",
@@ -245,8 +244,8 @@ function handleImguiMainState()
 end
 
 function sampev.onServerMessage(color, message)
-    if needToLogin and message:find("Добро пожаловать на Samp Role Play") then
-        sendLoggerMessage("Происходит автоматическая авторизация..")
+    if needToLogin and message:find("Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ РЅР° Samp Role Play") then
+        sendLoggerMessage("РџСЂРѕРёСЃС…РѕРґРёС‚ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєР°СЏ Р°РІС‚РѕСЂРёР·Р°С†РёСЏ..")
         lua_thread.create(
             function ()
                 wait(1500)
@@ -255,15 +254,15 @@ function sampev.onServerMessage(color, message)
         )
     end
 
-    if not needToLogin and message:find("Фильтр сброшен") then
+    if not needToLogin and message:find("Р¤РёР»СЊС‚СЂ СЃР±СЂРѕС€РµРЅ") then
         return false
     end
 
     if not needToLogin and dataToPost ~= {} then
-        if message:find(string.format("Вы повысили %s", dataToPost.target))
-        or message:find(string.format("Вы понизили %s", dataToPost.target))
-        or message:find(string.format("Вы приняли %s", dataToPost.target))
-        or message:find(string.format("Вы выгнали %s", dataToPost.target)) then
+        if message:find(string.format("Р’С‹ РїРѕРІС‹СЃРёР»Рё %s", dataToPost.target))
+        or message:find(string.format("Р’С‹ РїРѕРЅРёР·РёР»Рё %s", dataToPost.target))
+        or message:find(string.format("Р’С‹ РїСЂРёРЅСЏР»Рё %s", dataToPost.target))
+        or message:find(string.format("Р’С‹ РІС‹РіРЅР°Р»Рё %s", dataToPost.target)) then
             lua_thread.create(function ()
                 postData(dataToPost, true)
             end)
@@ -280,22 +279,22 @@ function sampev.onSendCommand(commandText)
     if command == "/invite" or command == "/iinvite" or command == "/uninvite" then
         local targetId, reason = commandText:match("(%d+)%s(.*)")
         if targetId == nil then
-            sendLoggerMessage(string.format("Введите: %s [id игрока] [причина]", command))
+            sendLoggerMessage(string.format("Р’РІРµРґРёС‚Рµ: %s [id РёРіСЂРѕРєР°] [РїСЂРёС‡РёРЅР°]", command))
             return false
         end
 
         if reason == nil or isEmptyString(reason) then
-            reason = "Нет причины"
+            reason = "РќРµС‚ РїСЂРёС‡РёРЅС‹"
         end
 
         if #reason > 25 then
-            sendLoggerMessage(string.format("Введите: %s [id игрока] [причина]", command))
+            sendLoggerMessage(string.format("Р’РІРµРґРёС‚Рµ: %s [id РёРіСЂРѕРєР°] [РїСЂРёС‡РёРЅР°]", command))
             return false
         end
 
         local targetName = sampGetPlayerNickname(targetId)
         if targetName == nil then
-            sendLoggerMessage(string.format("Введите: %s [id игрока] [причина]", command))
+            sendLoggerMessage(string.format("Р’РІРµРґРёС‚Рµ: %s [id РёРіСЂРѕРєР°] [РїСЂРёС‡РёРЅР°]", command))
             return false
         end
         updateToPostData(actionsArray[command], targetName, reason)
@@ -304,21 +303,21 @@ function sampev.onSendCommand(commandText)
     if command == "/giverank" then
         local targetId, rank, reason = commandText:match("(%d+)%s(%d+)%s(.*)")
         if targetId == nil or rank == nil then
-            sendLoggerMessage(string.format("Введите: %s [id игрока] [ранг] [причина*]", command))
+            sendLoggerMessage(string.format("Р’РІРµРґРёС‚Рµ: %s [id РёРіСЂРѕРєР°] [СЂР°РЅРі] [РїСЂРёС‡РёРЅР°*]", command))
             return false
         end
 
         if reason == nil or isEmptyString(reason) then
-            reason = "Нет причины"
+            reason = "РќРµС‚ РїСЂРёС‡РёРЅС‹"
         end
 
         if #reason > 25 then
-            sendLoggerMessage(string.format("Введите: %s [id игрока] [ранг] [причина*]", command))
+            sendLoggerMessage(string.format("Р’РІРµРґРёС‚Рµ: %s [id РёРіСЂРѕРєР°] [СЂР°РЅРі] [РїСЂРёС‡РёРЅР°*]", command))
             return false
         end
         local targetName = sampGetPlayerNickname(targetId)
         if targetName == nil then
-            sendLoggerMessage(string.format("Введите: %s [id игрока] [причина*]", command))
+            sendLoggerMessage(string.format("Р’РІРµРґРёС‚Рµ: %s [id РёРіСЂРѕРєР°] [РїСЂРёС‡РёРЅР°*]", command))
             return false
         end
         updateToPostData(string.format("%s: %s", actionsArray[command], rank), targetName, reason)
@@ -328,22 +327,22 @@ function sampev.onSendCommand(commandText)
         local targetName, rank, reason = commandText:match("(%S+)%s(%d+)%s(.*)")
         local isFound = false
         if targetName == nil or rank == nil then
-            sendLoggerMessage(string.format("Введите: %s [имя игрока] [ранг] [причина*]", command))
+            sendLoggerMessage(string.format("Р’РІРµРґРёС‚Рµ: %s [РёРјСЏ РёРіСЂРѕРєР°] [СЂР°РЅРі] [РїСЂРёС‡РёРЅР°*]", command))
             return false
         end
 
         if reason == nil or isEmptyString(reason) then
-            reason = "Нет причины"
+            reason = "РќРµС‚ РїСЂРёС‡РёРЅС‹"
         end
 
         if #reason > 25 then
-            sendLoggerMessage(string.format("Введите: %s [имя игрока] [ранг] [причина*]", command))
+            sendLoggerMessage(string.format("Р’РІРµРґРёС‚Рµ: %s [РёРјСЏ РёРіСЂРѕРєР°] [СЂР°РЅРі] [РїСЂРёС‡РёРЅР°*]", command))
             return false
         end
         if offMembersPool == {} then
             lua_thread.create(
                 function ()
-                    sendLoggerMessage("Получение списка сотрудников во фракци..")
+                    sendLoggerMessage("РџРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ РІРѕ С„СЂР°РєС†Рё..")
                     sampSendChat("/offmfilter clear")
                     wait(500)
                     sampSendChat("/offmembers 1")
@@ -356,7 +355,7 @@ function sampev.onSendCommand(commandText)
             end
         end
         if not isFound then
-            sendLoggerMessage("Указанный сотрудник не найден!")
+            sendLoggerMessage("РЈРєР°Р·Р°РЅРЅС‹Р№ СЃРѕС‚СЂСѓРґРЅРёРє РЅРµ РЅР°Р№РґРµРЅ!")
             return false
         end
         updateToPostData(string.format("%s: %s", actionsArray[command], rank), targetName, reason)
@@ -366,22 +365,22 @@ function sampev.onSendCommand(commandText)
         local targetName, reason = commandText:match("(%S+)%s(.*)")
         local isFound = false
         if targetName == nil or rank == nil then
-            sendLoggerMessage(string.format("Введите: %s [имя игрока] [причина]", command))
+            sendLoggerMessage(string.format("Р’РІРµРґРёС‚Рµ: %s [РёРјСЏ РёРіСЂРѕРєР°] [РїСЂРёС‡РёРЅР°]", command))
             return false
         end
 
         if reason == nil or isEmptyString(reason) then
-            reason = "Нет причины"
+            reason = "РќРµС‚ РїСЂРёС‡РёРЅС‹"
         end
 
         if #reason > 25 then
-            sendLoggerMessage(string.format("Введите: %s [имя игрока] [причина]", command))
+            sendLoggerMessage(string.format("Р’РІРµРґРёС‚Рµ: %s [РёРјСЏ РёРіСЂРѕРєР°] [РїСЂРёС‡РёРЅР°]", command))
             return false
         end
         if offMembersPool == {} then
             lua_thread.create(
                 function ()
-                    sendLoggerMessage("Получение списка сотрудников во фракци..")
+                    sendLoggerMessage("РџРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ РІРѕ С„СЂР°РєС†Рё..")
                     sampSendChat("/offmfilter clear")
                     wait(500)
                     sampSendChat("/offmembers 1")
@@ -394,7 +393,7 @@ function sampev.onSendCommand(commandText)
             end
         end
         if not isFound then
-            sendLoggerMessage("Указанный сотрудник не найден!")
+            sendLoggerMessage("РЈРєР°Р·Р°РЅРЅС‹Р№ СЃРѕС‚СЂСѓРґРЅРёРє РЅРµ РЅР°Р№РґРµРЅ!")
             return false
         end
         updateToPostData(actionsArray[command], targetName, reason)
@@ -417,7 +416,7 @@ function postData(data, isLog)
         for k, v in pairs(data) do
             d[k] = {
                 string.format("%s [%s]", rankArray[playerData.fractionType][tonumber(v[1])], v[1]),
-                string.format(u8"%s часов", v[2]),
+                string.format(u8"%s С‡Р°СЃРѕРІ", v[2]),
                 v[3]
             }
         end
@@ -426,10 +425,10 @@ function postData(data, isLog)
 
     response = requests.post(postUrl[isLog], {headers=headers, data=data})
     if response.status_code ~= 200 then
-        sendLoggerMessage(string.format("Не удалось сохранить лог действий! (%s)", response.status_code))
+        sendLoggerMessage(string.format("РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ Р»РѕРі РґРµР№СЃС‚РІРёР№! (%s)", response.status_code))
         return
     end
-    sendLoggerMessage("Данные отправлены..")
+    sendLoggerMessage("Р”Р°РЅРЅС‹Рµ РѕС‚РїСЂР°РІР»РµРЅС‹..")
 end
 
 function imgui.BeforeDrawFrame()
@@ -446,14 +445,14 @@ function imgui.OnDrawFrame()
     imgui.SetNextWindowSize(imgui.ImVec2(800, 600), imgui.Cond.FirstUseEver)
     imgui.Begin(string.format(fa.ICON_FA_ATLAS .. " %s", scriptName), imguiMainWindowState, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoCollapse)
 
-    -- Кнопки (начало)
+    -- РљРЅРѕРїРєРё (РЅР°С‡Р°Р»Рѕ)
     imgui.BeginChild("LeftChild", imgui.ImVec2(155, 109), true)
-    if imgui.ButtonClickable(not needToLogin, fa.ICON_FA_USER_ALT .. u8" Состав онлайн", imgui.ImVec2(140, 20)) then
+    if imgui.ButtonClickable(not needToLogin, fa.ICON_FA_USER_ALT .. u8" РЎРѕСЃС‚Р°РІ РѕРЅР»Р°Р№РЅ", imgui.ImVec2(140, 20)) then
         isOnlineMode = true
         selectedMember = {}
         sampSendChat("/members 1")
     end
-    if imgui.ButtonClickable(not needToLogin, fa.ICON_FA_USER_ALT_SLASH.. u8" Состав оффлайн", imgui.ImVec2(140, 20)) then
+    if imgui.ButtonClickable(not needToLogin, fa.ICON_FA_USER_ALT_SLASH.. u8" РЎРѕСЃС‚Р°РІ РѕС„С„Р»Р°Р№РЅ", imgui.ImVec2(140, 20)) then
         isOnlineMode = false
         selectedMember = {}
         lua_thread.create(
@@ -464,7 +463,7 @@ function imgui.OnDrawFrame()
             end)
 
     end
-    if imgui.ButtonClickable(not needToLogin and not isOnlineMode, fa.ICON_FA_CLOUD_UPLOAD_ALT .. u8" Выгрузить", imgui.ImVec2(140, 20)) then
+    if imgui.ButtonClickable(not needToLogin and not isOnlineMode, fa.ICON_FA_CLOUD_UPLOAD_ALT .. u8" Р’С‹РіСЂСѓР·РёС‚СЊ", imgui.ImVec2(140, 20)) then
         if offMembersPool == {} then
             lua_thread.create(
                 function ()
@@ -476,13 +475,13 @@ function imgui.OnDrawFrame()
         postData(offMembersPool, false)
     end
 
-    if imgui.ButtonClickable(needToLogin, fa.ICON_FA_SIGN_IN_ALT .. u8" Войти", imgui.ImVec2(140, 20)) then
+    if imgui.ButtonClickable(needToLogin, fa.ICON_FA_SIGN_IN_ALT .. u8" Р’РѕР№С‚Рё", imgui.ImVec2(140, 20)) then
         sampSendChat("/stats")
     end
     imgui.EndChild()
-    -- Кнопки (конец)
+    -- РљРЅРѕРїРєРё (РєРѕРЅРµС†)
 
-    -- Информация (начало)
+    -- РРЅС„РѕСЂРјР°С†РёСЏ (РЅР°С‡Р°Р»Рѕ)
     imguiSetCursorPos(8, 140)
     imgui.BeginChild("LeftBottomChild", imgui.ImVec2(155, 65), true)
     imgui.TextColoredRGB(
@@ -491,16 +490,16 @@ function imgui.OnDrawFrame()
     imgui.Text(u8(playerData.fraction))
     imgui.Text(u8(playerData.rank))
     imgui.EndChild()
-    -- Информация (конец)
+    -- РРЅС„РѕСЂРјР°С†РёСЏ (РєРѕРЅРµС†)
 
-    -- Онлайн (начало)
+    -- РћРЅР»Р°Р№РЅ (РЅР°С‡Р°Р»Рѕ)
     imguiSetCursorPos(170, 28)
     imgui.BeginChild("MainChild", imgui.ImVec2(622, 562), true)
     if isOnlineMode then
         imgui.Columns(3, "MainColumns", false)
-        imgui.Text(fa.ICON_FA_ID_CARD .. u8" Никнейм[ID]")
+        imgui.Text(fa.ICON_FA_ID_CARD .. u8" РќРёРєРЅРµР№Рј[ID]")
         imgui.NextColumn()
-        imgui.Text(fa.ICON_FA_CHART_LINE .. u8" Ранг[*]")
+        imgui.Text(fa.ICON_FA_CHART_LINE .. u8" Р Р°РЅРі[*]")
         imgui.NextColumn()
         imgui.Text(fa.ICON_FA_BED .. " AFK/Sleep")
         for imguiMemberName, imguiMemberAttrs in pairs(membersPool) do
@@ -510,7 +509,7 @@ function imgui.OnDrawFrame()
                 selectedMember.id = imguiMemberAttrs[1]
                 selectedMember.rank = imguiMemberAttrs[2]
                 selectedMember.afk = imguiMemberAttrs[3]
-                sendLoggerMessage("Выбран игрок: {6A5ACD}" .. selectedMember.name)
+                sendLoggerMessage("Р’С‹Р±СЂР°РЅ РёРіСЂРѕРє: {6A5ACD}" .. selectedMember.name)
             end
             imgui.NextColumn()
             imgui.Text(u8(imguiMemberAttrs[2]))
@@ -519,18 +518,18 @@ function imgui.OnDrawFrame()
             imgui.Separator()
         end
     end
-    -- Онлайн (конец)
+    -- РћРЅР»Р°Р№РЅ (РєРѕРЅРµС†)
 
-    -- Оффлайн (начало)
+    -- РћС„С„Р»Р°Р№РЅ (РЅР°С‡Р°Р»Рѕ)
     if not isOnlineMode then
         imgui.Columns(4, "MainColumns", false)
-        imgui.Text(fa.ICON_FA_ID_CARD .. u8" Никнейм")
+        imgui.Text(fa.ICON_FA_ID_CARD .. u8" РќРёРєРЅРµР№Рј")
         imgui.NextColumn()
-        imgui.Text(fa.ICON_FA_CHART_LINE .. u8" Ранг[*]")
+        imgui.Text(fa.ICON_FA_CHART_LINE .. u8" Р Р°РЅРі[*]")
         imgui.NextColumn()
-        imgui.Text(fa.ICON_FA_CLOCK .. u8" Онлайн")
+        imgui.Text(fa.ICON_FA_CLOCK .. u8" РћРЅР»Р°Р№РЅ")
         imgui.NextColumn()
-        imgui.Text(fa.ICON_FA_GLOBE .. u8" Последний вход")
+        imgui.Text(fa.ICON_FA_GLOBE .. u8" РџРѕСЃР»РµРґРЅРёР№ РІС…РѕРґ")
         for imguiName, imguiAttr in pairs(offMembersPool) do
             imgui.NextColumn()
             if imgui.Selectable(imguiName, false, imgui.SelectableFlags.SpanAllColumns) then
@@ -538,12 +537,12 @@ function imgui.OnDrawFrame()
                 selectedMember.rank = imguiAttr[1]
                 selectedMember.totalOnline = imguiAttr[2]
                 selectedMember.lastOnline = imguiAttr[3]
-                sendLoggerMessage("Выбран игрок: {6A5ACD}" .. selectedMember.name)
+                sendLoggerMessage("Р’С‹Р±СЂР°РЅ РёРіСЂРѕРє: {6A5ACD}" .. selectedMember.name)
             end
             imgui.NextColumn()
             imgui.Text(string.format("%s [%s]", rankArray[playerData.fractionType][tonumber(imguiAttr[1])], imguiAttr[1]))
             imgui.NextColumn()
-            imgui.Text(string.format(u8"%s часов", imguiAttr[2]))
+            imgui.Text(string.format(u8"%s С‡Р°СЃРѕРІ", imguiAttr[2]))
             imgui.NextColumn()
             imgui.Text(imguiAttr[3])
             imgui.Separator()
@@ -551,47 +550,47 @@ function imgui.OnDrawFrame()
     end
     imgui.Columns(1)
     imgui.EndChild()
-    -- Оффлайн (конец)
+    -- РћС„С„Р»Р°Р№РЅ (РєРѕРЅРµС†)
 
-    -- Действия (начало)
+    -- Р”РµР№СЃС‚РІРёСЏ (РЅР°С‡Р°Р»Рѕ)
     imguiSetCursorPos(8, 208)
     imgui.BeginChild("ActionChild", imgui.ImVec2(155, 132), true)
-    if imgui.ButtonClickable(selectedMember.name ~= nil, fa.ICON_FA_COPY .. u8" Копировать ник", imgui.ImVec2(140, 20)) then
+    if imgui.ButtonClickable(selectedMember.name ~= nil, fa.ICON_FA_COPY .. u8" РљРѕРїРёСЂРѕРІР°С‚СЊ РЅРёРє", imgui.ImVec2(140, 20)) then
         sendLoggerMessage(
-            string.format("Ник игрока {6A5ACD}%s%s{FFFFFF} скопирован в буфер обмена", selectedMember.name, selectedMember.id)
+            string.format("РќРёРє РёРіСЂРѕРєР° {6A5ACD}%s%s{FFFFFF} СЃРєРѕРїРёСЂРѕРІР°РЅ РІ Р±СѓС„РµСЂ РѕР±РјРµРЅР°", selectedMember.name, selectedMember.id)
         )
         setClipboardText(selectedMember.name)
     end
 
-    if imgui.ButtonClickable(selectedMember.name ~= nil, fa.ICON_FA_CLONE .. u8" Копировать RP-ник", imgui.ImVec2(140, 20)) then
+    if imgui.ButtonClickable(selectedMember.name ~= nil, fa.ICON_FA_CLONE .. u8" РљРѕРїРёСЂРѕРІР°С‚СЊ RP-РЅРёРє", imgui.ImVec2(140, 20)) then
         sendLoggerMessage(
-            string.format("RP-ник игрока {6A5ACD}%s%s{FFFFFF} скопирован в буфер обмена", selectedMember.name, selectedMember.id)
+            string.format("RP-РЅРёРє РёРіСЂРѕРєР° {6A5ACD}%s%s{FFFFFF} СЃРєРѕРїРёСЂРѕРІР°РЅ РІ Р±СѓС„РµСЂ РѕР±РјРµРЅР°", selectedMember.name, selectedMember.id)
         )
         setClipboardText(selectedMember.name:gsub("_", " "))
     end
 
-    createActionButton(fa.ICON_FA_PEN .. u8" Изменить ранг", commandsArray.giverank[isOnlineMode], selectedMember.name ~= nil)
-    createActionButton(fa.ICON_FA_USER_TIMES .. u8" Уволить", commandsArray.invite[isOnlineMode], selectedMember.name ~= nil)
-    createActionButton(fa.ICON_FA_SMS .. u8" Отправить SMS", "t", selectedMember.name ~= nil and isOnlineMode)
+    createActionButton(fa.ICON_FA_PEN .. u8" РР·РјРµРЅРёС‚СЊ СЂР°РЅРі", commandsArray.giverank[isOnlineMode], selectedMember.name ~= nil)
+    createActionButton(fa.ICON_FA_USER_TIMES .. u8" РЈРІРѕР»РёС‚СЊ", commandsArray.invite[isOnlineMode], selectedMember.name ~= nil)
+    createActionButton(fa.ICON_FA_SMS .. u8" РћС‚РїСЂР°РІРёС‚СЊ SMS", "t", selectedMember.name ~= nil and isOnlineMode)
     imgui.EndChild()
-    -- Действия (конец)
+    -- Р”РµР№СЃС‚РІРёСЏ (РєРѕРЅРµС†)
 
-    -- Мета (начало)
+    -- РњРµС‚Р° (РЅР°С‡Р°Р»Рѕ)
     imguiSetCursorPos(8, 525)
     imgui.BeginChild("MetaInfo", imgui.ImVec2(155, 65), true)
-    imgui.TextQuestion(string.format(u8"Версия: %s", scriptVersion), u8(scriptChangeLog))
+    imgui.TextQuestion(string.format(u8"Р’РµСЂСЃРёСЏ: %s", scriptVersion), u8(scriptChangeLog))
     imgui.TextColoredRGB("{A6A6A6}Dan_Capelli")
     imgui.TextColoredRGB("{FFA500}Oleg_Lombardi")
     imgui.EndChild()
-    -- Мета (конец)
+    -- РњРµС‚Р° (РєРѕРЅРµС†)
 
     imgui.End()
 end
 
 function sampev.onShowDialog(id, style, title, button1, button2, text)
-    if id == 22 and title == "Статистика персонажа" and needToLogin then
-        playerData.fraction = text:match("Организация(.-)\n")
-        playerData.rank = text:match("Ранг(.-)\n")
+    if id == 22 and title == "РЎС‚Р°С‚РёСЃС‚РёРєР° РїРµСЂСЃРѕРЅР°Р¶Р°" and needToLogin then
+        playerData.fraction = text:match("РћСЂРіР°РЅРёР·Р°С†РёСЏ(.-)\n")
+        playerData.rank = text:match("Р Р°РЅРі(.-)\n")
         playerData.fraction = playerData.fraction:gsub("\t", "")
         playerData.rank = playerData.rank:gsub("\t", "")
         local isGovernmentFraction = false
@@ -611,20 +610,20 @@ function sampev.onShowDialog(id, style, title, button1, button2, text)
             playerData.fractionType = "News"
         end
 
-        if playerData.fraction ~= "Нет" and isGovernmentFraction then
-            sendLoggerMessage(string.format("Вы авторизовались как {ffd700}%s {FFFFFF}({ffd700}%s{FFFFFF}){FFFFFF}!", playerData.rank, playerData.fraction))
+        if playerData.fraction ~= "РќРµС‚" and isGovernmentFraction then
+            sendLoggerMessage(string.format("Р’С‹ Р°РІС‚РѕСЂРёР·РѕРІР°Р»РёСЃСЊ РєР°Рє {ffd700}%s {FFFFFF}({ffd700}%s{FFFFFF}){FFFFFF}!", playerData.rank, playerData.fraction))
             needToLogin = not needToLogin
         end
 
         if needToLogin or not isGovernmentFraction then
-            sendLoggerMessage("Не удалось авторизоваться!")
+            sendLoggerMessage("РќРµ СѓРґР°Р»РѕСЃСЊ Р°РІС‚РѕСЂРёР·РѕРІР°С‚СЊСЃСЏ!")
             return true
         end
 
         return false
     end
 
-    if id == 22 and title == "Состав онлайн" and imguiMainWindowState.v then
+    if id == 22 and title == "РЎРѕСЃС‚Р°РІ РѕРЅР»Р°Р№РЅ" and imguiMainWindowState.v then
         membersPool = {}
         for _, dialogText in pairs(split(text, "\n")) do
             if dialogText:find("(%[%d+])%s(%w+_%w+)(%A+%s%[%d+])") then
@@ -636,7 +635,7 @@ function sampev.onShowDialog(id, style, title, button1, button2, text)
         return false
     end
 
-    if id == 22 and title == "Состав оффлайн" and imguiMainWindowState.v then
+    if id == 22 and title == "РЎРѕСЃС‚Р°РІ РѕС„С„Р»Р°Р№РЅ" and imguiMainWindowState.v then
         offMembersPool = {}
         for _, dialogText in pairs(split(text, "\n")) do
             if dialogText:find("(%w+_%w+)") then
@@ -817,7 +816,7 @@ function imgui.TextQuestion(label, description)
     end
 end
 
--- Функции строк
+-- Р¤СѓРЅРєС†РёРё СЃС‚СЂРѕРє
 
 function split(str, delim, plain)
     local tokens, pos, plain = {}, 1, not (plain == false)
@@ -833,7 +832,7 @@ function isEmptyString(str)
     return str:gsub("%s", "") == ""
 end
 
--- Автообновление скрипта
+-- РђРІС‚РѕРѕР±РЅРѕРІР»РµРЅРёРµ СЃРєСЂРёРїС‚Р°
 
 function autoUpdateScript(json_url, prefix, url)
     local dlstatus = require("moonloader").download_status
@@ -853,18 +852,18 @@ function autoUpdateScript(json_url, prefix, url)
                         if updateversion ~= thisScript().version then
                             lua_thread.create(function(prefix)
                                 local dlstatus = require("moonloader").download_status
-                                sendLoggerMessage(string.format("Обнаружено обновление! Новая версия: {ffd700}%s{FFFFFF}!", updateversion))
+                                sendLoggerMessage(string.format("РћР±РЅР°СЂСѓР¶РµРЅРѕ РѕР±РЅРѕРІР»РµРЅРёРµ! РќРѕРІР°СЏ РІРµСЂСЃРёСЏ: {ffd700}%s{FFFFFF}!", updateversion))
                                 wait(250)
                                 downloadUrlToFile(updatelink, thisScript().path,
                                     function(id3, status1, p13, p23)
                                         if status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
-                                            sendLoggerMessage(string.format("Обновление {ffd700}%s{FFFFFF} было установлено!", updateversion))
+                                            sendLoggerMessage(string.format("РћР±РЅРѕРІР»РµРЅРёРµ {ffd700}%s{FFFFFF} Р±С‹Р»Рѕ СѓСЃС‚Р°РЅРѕРІР»РµРЅРѕ!", updateversion))
                                             goupdatestatus = true
                                             lua_thread.create(function() wait(500) thisScript():reload() end)
                                         end
                                         if status1 == dlstatus.STATUSEX_ENDDOWNLOAD then
                                             if goupdatestatus == nil then
-                                                sendLoggerMessage("Не удалось установить обновление!")
+                                                sendLoggerMessage("РќРµ СѓРґР°Р»РѕСЃСЊ СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РѕР±РЅРѕРІР»РµРЅРёРµ!")
                                                 update = false
                                             end
                                         end
